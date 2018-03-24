@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import firebase from 'firebase';
-import {User} from './userComponent.js'
+import User from './UserComponent.js';
+import PhotoUploader from './PhotoUploaderComponent';
 
 class App extends Component {
     constructor(){
@@ -39,6 +40,7 @@ class App extends Component {
             return (
                 <div id='user_data'>
                     <User LogOut={this.handleSignOut} name={this.state.user.displayName} image={this.state.user.photoURL}/>
+                    <PhotoUploader />
                 </div>
             );
         }
