@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import firebase from 'firebase';
+import {User} from './userComponent.js'
 
 class App extends Component {
     constructor(){
@@ -16,18 +17,14 @@ class App extends Component {
 
     componentWillMount(){
         firebase.auth().onAuthStateChanged(user =>{
-            this.setState({
-                user: user
-            });
+            this.setState({user: user});
         });
     }
-
 
     handleSignIn(){
         const authProvider = new firebase.auth.GoogleAuthProvider();
         firebase.auth().signInWithPopup(authProvider)
-            .then(result => {console.log(`${result.user.email} se ha logeado`)
-                                       console.log(result.user)})
+            .then(result => {console.log(`${result.user.email} se ha logeado`)})
             .catch(error => {console.log(`Error : ${error.message}`)});
     }
 
@@ -38,19 +35,15 @@ class App extends Component {
     }
 
     renderLogin(){
-        if(this.state.user != null){
+        if(this.state.user){
             return (
-                <div>
-                    <p>Bienvenido {this.state.user.displayName}</p>
-                    <img src={this.state.user.photoURL} alt={this.state.user.displayName}></img>
-                    <br></br><button onClick={this.handleSignOut}>Salir</button>
+                <div id='user_data'>
+                    <User LogOut={this.handleSignOut} name={this.state.user.displayName} image={this.state.user.photoURL}/>
                 </div>
             );
         }
         else{
-            return(
-                <button onClick={this.handleSignIn}>Registrate con Google</button>
-            );
+            return(<button onClick={this.handleSignIn}>Registrate con Google</button>);
         }
     }
 
@@ -61,7 +54,7 @@ class App extends Component {
               <img src={logo} className="App-logo" alt="logo" />
               <h1 className="App-title">The Cosmos</h1>
           </header>
-          <p>{this.renderLogin()}</p>
+          {this.renderLogin()}
       </div>
     );
   }
