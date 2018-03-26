@@ -2,12 +2,14 @@ import React, {Component} from 'react';
 import firebase from 'firebase';
 
 class PhotoUploader extends Component{
-    constructor(){
+    constructor(props){
         super();
         this.state = {
             uploadProgress: 0,
             imageURL: null,
-            uploading: false
+            uploading: false,
+            user: {userName: props.user.displayName,
+                       userAvatar: props.user.photoURL}
         };
 
         this.renderProgressBar = this.renderProgressBar.bind(this);
@@ -26,7 +28,6 @@ class PhotoUploader extends Component{
     }
 
     handleUploadPhoto(event){
-        console.log(event.target.files);
         const photoFile = event.target.files[0]; //get the file to upload
         const reference = firebase.storage().ref(`/shared_photos/${photoFile.name}`);
         const task = reference.put(photoFile);
@@ -38,10 +39,18 @@ class PhotoUploader extends Component{
         }, error => {
             console.log(error.message);
         },() => {
+            console.log('entro');
             this.setState({uploading: false,
                                   imageURL: task.snapshot.downloadURL});
+            const recordData = {
+                photoURL: task.snapshot.downloadURL,
+                user: this.state.user
+            };
+            const dbRef = firebase.database().ref('photos');
+            const newPhoto = dbRef.push();
+            newPhoto.set(recordData);
+            console.log('fin');
         });
-        //const photoFile = event.
     }
 
     render(){
@@ -51,9 +60,6 @@ class PhotoUploader extends Component{
                     <label > Elige una imagen para subir </label>
                     <input type='file' id='photoFile' onChange={this.handleUploadPhoto}></input>
                     {this.renderProgressBar()}
-                </div>
-                <div>
-                    <img src={this.state.imageURL} width='300' alt=''/>
                 </div>
             </div>
         );

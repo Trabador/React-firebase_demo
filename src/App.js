@@ -4,21 +4,42 @@ import './App.css';
 import firebase from 'firebase';
 import User from './UserComponent.js';
 import PhotoUploader from './PhotoUploaderComponent';
+import PhotoDisplayer from './PhotoDisplayerComponent'
 
 class App extends Component {
     constructor(){
         super();
         this.state = {
-            user: null
+            user: null,
+            photoList: []
         };
 
         this.handleSignIn = this.handleSignIn.bind(this);
         this.handleSignOut = this.handleSignOut.bind(this);
+        this.renderLogin = this.renderLogin.bind(this);
     }
 
     componentWillMount(){
-        firebase.auth().onAuthStateChanged(user =>{
-            this.setState({user: user});
+        firebase.auth().onAuthStateChanged(firebaseUser =>{
+            console.log('entro auth change');
+            console.log(firebaseUser);
+            this.setState({ user: firebaseUser});
+            console.log(this.state.user);
+        });
+
+        const reference = firebase.database().ref('photos');
+
+        reference.on('value', snapshot =>{
+            let objects = snapshot.val();
+            if(objects != null){
+                this.setState({
+                    photoList: Object.values(objects)
+                });
+            }
+            else{
+                this.setState({photoList: []});
+            }
+            console.log('entro a on value');
         });
     }
 
@@ -38,9 +59,10 @@ class App extends Component {
     renderLogin(){
         if(this.state.user){
             return (
-                <div id='user_data'>
-                    <User LogOut={this.handleSignOut} name={this.state.user.displayName} image={this.state.user.photoURL}/>
-                    <PhotoUploader />
+                <div id='content'>
+                    <User LogOut={this.handleSignOut}  user={this.state.user}/>
+                    <PhotoUploader user={this.state.user}/>
+                    <PhotoDisplayer photos={this.state.photoList}/>
                 </div>
             );
         }
