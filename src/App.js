@@ -21,10 +21,7 @@ class App extends Component {
 
     componentWillMount(){
         firebase.auth().onAuthStateChanged(firebaseUser =>{
-            console.log('entro auth change');
-            console.log(firebaseUser);
             this.setState({ user: firebaseUser});
-            console.log(this.state.user);
         });
 
         const reference = firebase.database().ref('photos');
@@ -39,7 +36,6 @@ class App extends Component {
             else{
                 this.setState({photoList: []});
             }
-            console.log('entro a on value');
         });
     }
 

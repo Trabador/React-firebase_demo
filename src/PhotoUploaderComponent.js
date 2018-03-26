@@ -39,7 +39,6 @@ class PhotoUploader extends Component{
         }, error => {
             console.log(error.message);
         },() => {
-            console.log('entro');
             this.setState({uploading: false,
                                   imageURL: task.snapshot.downloadURL});
             const recordData = {
@@ -49,7 +48,6 @@ class PhotoUploader extends Component{
             const dbRef = firebase.database().ref('photos');
             const newPhoto = dbRef.push();
             newPhoto.set(recordData);
-            console.log('fin');
         });
     }
 
