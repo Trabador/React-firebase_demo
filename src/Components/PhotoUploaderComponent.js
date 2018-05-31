@@ -9,11 +9,15 @@ class PhotoUploader extends Component{
             imageURL: null,
             uploading: false,
             user: {userName: props.user.displayName,
-                       userAvatar: props.user.photoURL}
+                    userAvatar: props.user.photoURL}
         };
 
         this.renderProgressBar = this.renderProgressBar.bind(this);
         this.handleUploadPhoto = this.handleUploadPhoto.bind(this);
+    }
+
+    shouldComponentUpdate(nextProps, nextState){
+        return(this.state.uploading !== nextState.uploading);
     }
 
     renderProgressBar(){
@@ -35,7 +39,6 @@ class PhotoUploader extends Component{
         task.on('state_changed', snapshot => {
             let percentage = ((snapshot.bytesTransferred/snapshot.totalBytes)*100);
             this.setState({uploadProgress: percentage, uploading: true});
-            this.render();
         }, error => {
             console.log(error.message);
         },() => {

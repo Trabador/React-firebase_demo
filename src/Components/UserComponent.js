@@ -6,7 +6,7 @@ class User extends Component{
             <div>
                 <p>Bienvenido: {this.props.user.displayName}</p>
                 <img src={this.props.user.photoURL} alt={this.props.user.displayName}></img>
-                <br></br><button onClick={this.props.LogOut}>Salir</button>
+                <br/><button onClick={this.props.logOut}>Salir</button>
             </div>
         );
     }

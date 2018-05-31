@@ -2,47 +2,65 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import firebase from 'firebase';
-import User from './UserComponent.js';
-import PhotoUploader from './PhotoUploaderComponent';
-import PhotoDisplayer from './PhotoDisplayerComponent'
+import { dbConfiguration } from './config';
+import User from './Components/UserComponent.js';
+import PhotoUploader from './Components/PhotoUploaderComponent';
+import PhotoDisplayer from './Components/PhotoDisplayerComponent';
 
 class App extends Component {
     constructor(){
         super();
+
+        // Initialize Firebase
+        firebase.initializeApp(dbConfiguration);
+
         this.state = {
             user: null,
             photoList: []
         };
+
+        this.databaseReference = firebase.database().ref();
+        this.photosReference = this.databaseReference.child('photos');
 
         this.handleSignIn = this.handleSignIn.bind(this);
         this.handleSignOut = this.handleSignOut.bind(this);
         this.renderLogin = this.renderLogin.bind(this);
     }
 
+    signIn = (snapshot) => {
+        let record = {data: snapshot.val(), id: snapshot.key};
+        this.setState({photoList: this.state.photoList.concat(record)});
+    };
+
+
+
     componentWillMount(){
-        firebase.auth().onAuthStateChanged(firebaseUser =>{
-            this.setState({ user: firebaseUser});
-        });
-
-        const reference = firebase.database().ref('photos');
-
-        reference.on('value', snapshot =>{
-            let objects = snapshot.val();
-            if(objects != null){
-                this.setState({
-                    photoList: Object.values(objects)
-                });
+        firebase.auth().onAuthStateChanged(firebaseUser => {
+                if(firebaseUser){
+                    console.log('logeado')
+                    this.photosReference.on('child_added', this.signIn);
+                }
+                else{
+                    console.log('no logeado')
+                    this.photosReference.off('child_added');
+                    this.setState(
+                        {photoList: []}
+                    );
+                }
+                this.setState({ user: firebaseUser});
             }
-            else{
-                this.setState({photoList: []});
-            }
-        });
+        );
+    }
+
+    componentWillUnmount(){
+        this.databaseReference.child('photos').off('child_added');
     }
 
     handleSignIn(){
         const authProvider = new firebase.auth.GoogleAuthProvider();
+        authProvider.addScope('https://www.googleapis.com/auth/userinfo.profile');
         firebase.auth().signInWithPopup(authProvider)
-            .then(result => {console.log(`${result.user.email} se ha logeado`)})
+            .then(result => {console.log(`${result.user.email} se ha logeado`, result)})
             .catch(error => {console.log(`Error : ${error.message}`)});
     }
 
@@ -56,7 +74,7 @@ class App extends Component {
         if(this.state.user){
             return (
                 <div id='content'>
-                    <User LogOut={this.handleSignOut}  user={this.state.user}/>
+                    <User logOut={this.handleSignOut}  user={this.state.user}/>
                     <PhotoUploader user={this.state.user}/>
                     <PhotoDisplayer photos={this.state.photoList}/>
                 </div>
@@ -68,6 +86,7 @@ class App extends Component {
     }
 
   render() {
+    console.log(this.state.photoList)
     return (
       <div className="App">
           <header className="App-header">
