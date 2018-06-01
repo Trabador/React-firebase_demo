@@ -1,0 +1,47 @@
+.imageUploaderContainer {
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+
+.imageUploaderSelector{
+    border: none;
+    margin: 0px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    padding: 8px 24px;
+    font-size: 1.3em;
+    font-family: 'Droid Sans', sans-serif;
+    background-color: #019875;
+    color: #fff;
+    transition: 0.2s ease-out;
+}
+
+.imageUploaderSelector:hover{
+    background-color: #02BA85;
+    color: #fff;
+    transition: 0.2s ease-out;
+}
+
+.uploadText{
+    width: 800px;
+    min-width: 800px;
+    font-size: 1.3em;
+    padding-left: 20px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    font-family: 'Droid Sans', sans-serif;
+    color: black;
+    transition: 0.2s ease-out;
+}
+
+.progressBar{
+    font-size: 16px;
+    color: black;
+    border-radius: 4px;
+}

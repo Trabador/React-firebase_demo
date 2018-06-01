@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 
 class Photo extends Component{
 
+    shouldComponentUpdate(nextProps, nextState){
+        return(this.props.key !== nextProps.key);
+    }
+
     render(){
         return(
             <div>

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import firebase from 'firebase';
+import './PhotoUploader.css';
 
 class PhotoUploader extends Component{
     constructor(props){
@@ -23,7 +24,7 @@ class PhotoUploader extends Component{
     renderProgressBar(){
         if(this.state.uploading){
             return(
-                <div>
+                <div className='progressBar'>
                     Subiendo Archivo
                     <progress value={this.state.uploadProgress} max='100'></progress>
                 </div>
@@ -57,9 +58,11 @@ class PhotoUploader extends Component{
     render(){
         return(
             <div>
-                <div>
-                    <label > Elige una imagen para subir </label>
-                    <input type='file' id='photoFile' onChange={this.handleUploadPhoto}></input>
+                <div className='imageUploaderContainer'>
+                    <label className='uploadText'> Elige una imagen para subir </label>
+                    <input type='file' id='photoFile' 
+                            onChange={this.handleUploadPhoto}
+                            className='imageUploaderSelector'/>
                     {this.renderProgressBar()}
                 </div>
             </div>

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import firebase from 'firebase';
 import { dbConfiguration } from './config';
@@ -27,21 +26,17 @@ class App extends Component {
         this.renderLogin = this.renderLogin.bind(this);
     }
 
-    signIn = (snapshot) => {
+    putRecords = (snapshot) => {
         let record = {data: snapshot.val(), id: snapshot.key};
         this.setState({photoList: this.state.photoList.concat(record)});
     };
 
-
-
     componentWillMount(){
         firebase.auth().onAuthStateChanged(firebaseUser => {
                 if(firebaseUser){
-                    console.log('logeado')
-                    this.photosReference.on('child_added', this.signIn);
+                    this.photosReference.on('child_added', this.putRecords);
                 }
                 else{
-                    console.log('no logeado')
                     this.photosReference.off('child_added');
                     this.setState(
                         {photoList: []}
@@ -73,15 +68,21 @@ class App extends Component {
     renderLogin(){
         if(this.state.user){
             return (
-                <div id='content'>
-                    <User logOut={this.handleSignOut}  user={this.state.user}/>
-                    <PhotoUploader user={this.state.user}/>
-                    <PhotoDisplayer photos={this.state.photoList}/>
+                <div className='mainContainer'>
+                    <div className='userContainer'>
+                        <User logOut={this.handleSignOut}  user={this.state.user}/>
+                    </div>
+                    <div className='photoUploaderContainer'>
+                        <PhotoUploader user={this.state.user}/>
+                    </div>
+                    <div className='displayerContainer'>
+                        <PhotoDisplayer photos={this.state.photoList}/>
+                    </div>
                 </div>
             );
         }
         else{
-            return(<button onClick={this.handleSignIn}>Registrate con Google</button>);
+            return(<button onClick={this.handleSignIn} className='logIn'>Registrate con Google</button>);
         }
     }
 
@@ -90,7 +91,6 @@ class App extends Component {
     return (
       <div className="App">
           <header className="App-header">
-              <img src={logo} className="App-logo" alt="logo" />
               <h1 className="App-title">The Cosmos</h1>
           </header>
           {this.renderLogin()}
